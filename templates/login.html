@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Log in | MediConnect{% endblock %}
+{% block content %}
+<section class="form-page">
+  <div class="form-intro"><span class="eyebrow" data-i18n="welcome_back">WELCOME BACK</span><h1 data-i18n="login_title">Log in to MediConnect</h1><p data-i18n="login_text">Enter your registered email and password to continue.</p></div>
+  <form method="post" class="form-card">
+    <label for="email" data-i18n="email">Email address</label><input id="email" name="email" type="email" required autocomplete="username" placeholder="name@example.com">
+    <label for="password" data-i18n="password">Password</label><input id="password" name="password" type="password" required autocomplete="current-password" placeholder="Enter your password">
+    <button class="button button-large full-width" type="submit" data-i18n="login">Log in</button>
+    <p class="form-bottom"><span data-i18n="no_account">Do not have an account?</span> <a href="{{ url_for('register') }}" data-i18n="register_here">Register here</a></p>
+    <div class="demo-note"><strong>Project demo accounts</strong><br>Admin: admin@mediconnect.com / admin123<br>Doctor: doctor1@mediconnect.com / doc123</div>
+  </form>
+</section>
+{% endblock %}

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}MediConnect{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="{{ url_for('home') }}"><span class="brand-mark">+</span><span>MediConnect<small>Care made simple</small></span></a>
+  <nav class="main-nav" aria-label="Main navigation">
+    <a href="{{ url_for('home') }}" data-i18n="home">Home</a>
+    {% if current_role == 'patient' %}
+      <a href="{{ url_for('patient_dashboard') }}" data-i18n="my_dashboard">My Dashboard</a>
+      <a href="{{ url_for('book') }}" data-i18n="book_appointment">Book Appointment</a>
+    {% elif current_role == 'doctor' %}
+      <a href="{{ url_for('doctor_dashboard') }}" data-i18n="doctor_dashboard">Doctor Dashboard</a>
+    {% elif current_role == 'admin' %}
+      <a href="{{ url_for('admin_dashboard') }}" data-i18n="admin_dashboard">Admin Dashboard</a>
+    {% endif %}
+  </nav>
+  <div class="nav-actions">
+    <label class="language-label" for="languageSelect">Language</label>
+    <select id="languageSelect" aria-label="Choose language">
+      <option value="en">English</option><option value="hi">हिन्दी</option><option value="mr">मराठी</option>
+    </select>
+    {% if current_user %}
+      <span class="welcome-user">Hi, {{ current_user.split(' ')[0] }}</span>
+      <a class="button button-small button-outline" href="{{ url_for('logout') }}" data-i18n="logout">Logout</a>
+    {% else %}
+      <a class="button button-small button-outline" href="{{ url_for('login') }}" data-i18n="login">Log in</a>
+      <a class="button button-small" href="{{ url_for('register') }}" data-i18n="sign_up">Sign up</a>
+    {% endif %}
+  </div>
+</header>
+
+<main class="page-shell">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-wrap" aria-live="polite">
+        {% for category, message in messages %}
+          <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="footer">
+  <div><strong>MediConnect</strong><p data-i18n="footer_line">Healthcare made simpler, smarter and accessible to everyone.</p></div>
+  <p class="footer-note">For college demonstration • Use sample data only</p>
+</footer>
+
+<button class="voice-help" id="voiceHelp" type="button" aria-label="Open voice help">
+  <span aria-hidden="true">🎙</span><span data-i18n="voice_help">Need help? Talk to us</span>
+</button>
+<div class="voice-panel" id="voicePanel" hidden>
+  <div class="voice-panel-head"><strong data-i18n="voice_title">MediConnect Voice Help</strong><button id="closeVoice" aria-label="Close">×</button></div>
+  <p id="voiceMessage" data-i18n="voice_intro">You can say: book appointment, my appointments, home, or help.</p>
+  <button class="button" id="startListening" type="button" data-i18n="start_talking">Start talking</button>
+  <small data-i18n="voice_note">This helper gives website guidance, not medical advice.</small>
+</div>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

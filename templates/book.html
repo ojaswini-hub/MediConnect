@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Book an appointment | MediConnect{% endblock %}
+{% block content %}
+<section class="page-heading"><span class="eyebrow" data-i18n="appointment_booking">APPOINTMENT BOOKING</span><h1 data-i18n="book_title">Book your appointment</h1><p data-i18n="book_subtitle">Choose a doctor and a suitable time. We will keep your request in your dashboard.</p></section>
+<div class="booking-layout">
+  <form method="post" class="form-card booking-form">
+    <div class="form-step"><span>1</span><div><h3 data-i18n="select_doctor">Select a doctor</h3><p data-i18n="select_doctor_text">Choose the department or doctor that you need.</p></div></div>
+    <label for="doctor_id" data-i18n="doctor">Doctor</label>
+    <select id="doctor_id" name="doctor_id" required><option value="" data-i18n="choose_doctor_option">Choose a doctor</option>
+      {% for doctor in doctors %}<option value="{{ doctor.id }}">{{ doctor.name }} — {{ doctor.specialization }}</option>{% endfor %}
+    </select>
+    <div class="form-step"><span>2</span><div><h3 data-i18n="choose_date_time">Choose date and time</h3><p data-i18n="choose_date_text">Select a date and an available time slot.</p></div></div>
+    <div class="two-columns">
+      <div><label for="date" data-i18n="appointment_date">Appointment date</label><input id="date" name="date" type="date" min="{{ min_date }}" required></div>
+      <div><label for="time" data-i18n="appointment_time">Appointment time</label>
+        <select id="time" name="time" required>
+          <option value="" data-i18n="choose_time">Choose a time</option>
+          <option>09:00 AM</option><option>10:00 AM</option><option>11:00 AM</option><option>12:00 PM</option><option>02:00 PM</option><option>03:00 PM</option><option>04:00 PM</option>
+        </select>
+      </div>
+    </div>
+    <label for="reason" data-i18n="reason">Reason for visit (optional)</label><textarea id="reason" name="reason" rows="3" placeholder="Briefly tell the doctor why you need an appointment"></textarea>
+    <div class="notice-box"><strong data-i18n="please_note">Please note:</strong> <span data-i18n="booking_note">Your appointment will be pending until the doctor confirms it.</span></div>
+    <button class="button button-large full-width" type="submit" data-i18n="send_request">Send appointment request</button>
+  </form>
+  <aside class="side-help"><div class="side-help-icon">♡</div><h3 data-i18n="need_help_booking">Need help booking?</h3><p data-i18n="booking_help_text">You can use the voice help button at the bottom of the page for simple website guidance.</p><p class="small-muted" data-i18n="booking_tip">Tip: If you cannot find a suitable time, try another date.</p></aside>
+</div>
+{% endblock %}

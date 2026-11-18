@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Doctor dashboard | MediConnect{% endblock %}
+{% block content %}
+<section class="dashboard-welcome"><div><span class="eyebrow" data-i18n="doctor_dashboard">DOCTOR DASHBOARD</span><h1>Welcome, {{ current_user }}</h1><p>{{ profile.specialization }} • {{ profile.qualification }}</p><p class="small-muted">{{ profile.availability }}</p></div></section>
+<section class="content-card">
+  <div class="card-heading"><div><h2 data-i18n="patient_appointments">Patient appointments</h2><p data-i18n="doctor_table_text">Review requests and update their status.</p></div></div>
+  {% if appointments %}
+  <div class="table-wrap"><table><thead><tr><th data-i18n="patient">Patient</th><th data-i18n="date">Date</th><th data-i18n="time">Time</th><th data-i18n="reason">Reason</th><th data-i18n="status">Status</th><th data-i18n="action">Action</th></tr></thead><tbody>
+  {% for a in appointments %}<tr><td><strong>{{ a.patient_name }}</strong><small class="table-sub">{{ a.email }}</small></td><td>{{ a.date }}</td><td>{{ a.time }}</td><td>{{ a.reason or '—' }}</td><td><span class="status status-{{ a.status|lower }}">{{ a.status }}</span></td><td class="action-buttons">
+    {% if a.status == 'Pending' %}<form method="post" action="{{ url_for('doctor_update_appointment',appointment_id=a.id,action='accept') }}"><button class="button button-small" type="submit" data-i18n="confirm">Confirm</button></form><form method="post" action="{{ url_for('doctor_update_appointment',appointment_id=a.id,action='reject') }}"><button class="button button-small button-danger" type="submit" data-i18n="reject">Reject</button></form>
+    {% elif a.status == 'Confirmed' %}<form method="post" action="{{ url_for('doctor_update_appointment',appointment_id=a.id,action='complete') }}"><button class="button button-small" type="submit" data-i18n="mark_completed">Mark completed</button></form>{% else %}<span class="muted">—</span>{% endif %}
+  </td></tr>{% endfor %}
+  </tbody></table></div>
+  {% else %}<div class="empty-state"><div>▣</div><h3 data-i18n="no_patient_appointments">No appointment requests</h3><p data-i18n="no_patient_appointments_text">New patient requests will appear here.</p></div>{% endif %}
+</section>
+{% endblock %}

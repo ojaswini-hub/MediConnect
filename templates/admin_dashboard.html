@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Admin dashboard | MediConnect{% endblock %}
+{% block content %}
+<section class="dashboard-welcome"><div><span class="eyebrow" data-i18n="admin_dashboard">ADMIN DASHBOARD</span><h1 data-i18n="admin_welcome">System overview</h1><p data-i18n="admin_welcome_text">Manage doctors and monitor appointment activity.</p></div></section>
+<div class="stats-row four-stats">
+  <div class="stat-card"><span data-i18n="patients">Patients</span><strong>{{ stats.patients }}</strong></div>
+  <div class="stat-card"><span data-i18n="doctors">Doctors</span><strong>{{ stats.doctors }}</strong></div>
+  <div class="stat-card"><span data-i18n="appointments">Appointments</span><strong>{{ stats.appointments }}</strong></div>
+  <div class="stat-card"><span data-i18n="pending">Pending</span><strong>{{ stats.pending }}</strong></div>
+</div>
+
+<section class="content-card">
+  <div class="card-heading"><div><h2 data-i18n="add_doctor">Add a doctor</h2><p data-i18n="add_doctor_text">Create a login account and doctor profile.</p></div></div>
+  <form method="post" action="{{ url_for('add_doctor') }}" class="admin-form">
+    <div><label data-i18n="full_name">Full name</label><input name="name" required placeholder="Dr. Full Name"></div>
+    <div><label data-i18n="email">Email address</label><input name="email" type="email" required placeholder="doctor@example.com"></div>
+    <div><label data-i18n="temporary_password">Temporary password</label><input name="password" required minlength="6" placeholder="At least 6 characters"></div>
+    <div><label data-i18n="specialization">Specialization</label><select name="specialization" required><option value="">Choose department</option><option>General Medicine</option><option>Cardiology</option><option>Dermatology</option><option>Orthopaedics</option><option>Paediatrics</option><option>ENT</option><option>Gynaecology</option><option>Ophthalmology</option></select></div>
+    <div><label data-i18n="qualification">Qualification</label><input name="qualification" placeholder="MBBS, MD"></div>
+    <div><label data-i18n="availability">Availability</label><input name="availability" placeholder="Mon-Sat, 9 AM - 5 PM"></div>
+    <button class="button" type="submit" data-i18n="add_doctor_button">Add doctor</button>
+  </form>
+</section>
+
+<section class="content-card">
+  <div class="card-heading"><div><h2 data-i18n="manage_doctors">Manage doctors</h2><p data-i18n="manage_doctors_text">Remove a doctor account when required.</p></div></div>
+  <div class="table-wrap"><table><thead><tr><th data-i18n="doctor">Doctor</th><th data-i18n="specialization">Specialization</th><th data-i18n="email">Email</th><th data-i18n="availability">Availability</th><th data-i18n="action">Action</th></tr></thead><tbody>
+  {% for d in doctors %}<tr><td><strong>{{ d.name }}</strong><small class="table-sub">{{ d.qualification }}</small></td><td>{{ d.specialization }}</td><td>{{ d.email }}</td><td>{{ d.availability }}</td><td><form method="post" action="{{ url_for('delete_doctor',doctor_id=d.id) }}" onsubmit="return confirm('Remove this doctor account?')"><button class="button-link danger-text" type="submit" data-i18n="remove">Remove</button></form></td></tr>{% endfor %}
+  </tbody></table></div>
+</section>
+
+<section class="content-card">
+  <div class="card-heading"><div><h2 data-i18n="all_appointments">All appointments</h2><p data-i18n="admin_appointments_text">View appointment activity and update status when needed.</p></div></div>
+  {% if appointments %}<div class="table-wrap"><table><thead><tr><th data-i18n="patient">Patient</th><th data-i18n="doctor">Doctor</th><th data-i18n="date">Date</th><th data-i18n="time">Time</th><th data-i18n="status">Status</th><th data-i18n="action">Action</th></tr></thead><tbody>
+  {% for a in appointments %}<tr><td>{{ a.patient_name }}<small class="table-sub">{{ a.email }}</small></td><td>{{ a.doctor }}</td><td>{{ a.date }}</td><td>{{ a.time }}</td><td><span class="status status-{{ a.status|lower }}">{{ a.status }}</span></td><td class="action-buttons">
+    {% if a.status == 'Pending' %}<form method="post" action="{{ url_for('admin_update_appointment',appointment_id=a.id,status='Confirmed') }}"><button class="button button-small" type="submit" data-i18n="confirm">Confirm</button></form>{% endif %}
+    {% if a.status not in ['Cancelled','Completed','Rejected'] %}<form method="post" action="{{ url_for('admin_update_appointment',appointment_id=a.id,status='Cancelled') }}"><button class="button button-small button-danger" type="submit" data-i18n="cancel">Cancel</button></form>{% endif %}
+  </td></tr>{% endfor %}
+  </tbody></table></div>{% else %}<p class="muted" data-i18n="no_appointments">No appointments yet.</p>{% endif %}
+</section>
+{% endblock %}

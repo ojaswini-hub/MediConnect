@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}My dashboard | MediConnect{% endblock %}
+{% block content %}
+<section class="dashboard-welcome"><div><span class="eyebrow" data-i18n="patient_dashboard">PATIENT DASHBOARD</span><h1><span data-i18n="hello">Hello</span>, {{ current_user }}!</h1><p data-i18n="dashboard_welcome_text">Here is a simple overview of your appointments.</p></div><a href="{{ url_for('book') }}" class="button button-large" data-i18n="book_appointment">Book appointment</a></section>
+
+{% if reminders %}
+<section class="reminder-panel" id="reminderPanel">
+  <div class="reminder-symbol">🔔</div><div><h2 data-i18n="upcoming_reminder">Upcoming appointment reminder</h2>
+  {% for a in reminders %}<p><strong>{{ a.doctor }}</strong> — {{ a.date }} at {{ a.time }} <span class="status status-{{ a.status|lower }}">{{ a.status }}</span></p>{% endfor %}
+  <small data-i18n="reminder_note">Please arrive a little early. This reminder is shown inside the website.</small></div>
+</section>
+{% endif %}
+
+<div class="stats-row">
+  <div class="stat-card"><span data-i18n="total_appointments">Total appointments</span><strong>{{ appointments|length }}</strong></div>
+  <div class="stat-card"><span data-i18n="upcoming">Upcoming</span><strong>{{ upcoming|length }}</strong></div>
+  <div class="stat-card"><span data-i18n="need_attention">Need attention</span><strong>{{ appointments|selectattr('status','equalto','Pending')|list|length }}</strong></div>
+</div>
+
+<section class="content-card">
+  <div class="card-heading"><div><h2 data-i18n="my_appointments">My appointments</h2><p data-i18n="appointments_table_text">See your appointment date, doctor and current status.</p></div><a class="text-link" href="{{ url_for('book') }}" data-i18n="book_another">+ Book another</a></div>
+  {% if appointments %}
+  <div class="table-wrap"><table><thead><tr><th data-i18n="doctor">Doctor</th><th data-i18n="date">Date</th><th data-i18n="time">Time</th><th data-i18n="status">Status</th><th data-i18n="action">Action</th></tr></thead><tbody>
+  {% for a in appointments %}<tr><td><strong>{{ a.doctor }}</strong><small class="table-sub">{{ a.reason or 'Appointment' }}</small></td><td>{{ a.date }}</td><td>{{ a.time }}</td><td><span class="status status-{{ a.status|lower }}">{{ a.status }}</span></td><td>{% if a.status not in ['Cancelled','Rejected','Completed'] %}<form method="post" action="{{ url_for('cancel_appointment', appointment_id=a.id) }}" onsubmit="return confirm('Are you sure you want to cancel this appointment?')"><button class="button-link danger-text" type="submit" data-i18n="cancel">Cancel</button></form>{% else %}<span class="muted">—</span>{% endif %}</td></tr>{% endfor %}
+  </tbody></table></div>
+  {% else %}<div class="empty-state"><div>▣</div><h3 data-i18n="no_appointments">No appointments yet</h3><p data-i18n="no_appointments_text">When you book an appointment, it will appear here.</p><a class="button" href="{{ url_for('book') }}" data-i18n="book_first">Book your first appointment</a></div>{% endif %}
+</section>
+{% endblock %}
